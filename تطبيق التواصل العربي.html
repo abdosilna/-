@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تطبيق التواصل العربي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0D0618;
+      --surface-dark: #150B28;
+      --surface-elevated: #1F103A;
+      --surface-card: #261447;
+      --border-color: #3E236E;
+      --primary: #9D4EDD;
+      --primary-light: #C77DFF;
+      --primary-dark: #5A189A;
+      --gold: #FFD166;
+      --emerald: #06D6A0;
+      --rose: #FF758F;
+      --text-main: #F9F7FD;
+      --text-muted: #B8ABCE;
+      --danger: #FF4D6D;
+      --font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-bottom: 70px;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--surface-dark);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .brand-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .points-pill {
+      background: var(--surface-elevated);
+      border: 1px solid rgba(255, 209, 102, 0.4);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--gold);
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-admin-link {
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--surface-dark);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      width: 20%;
+    }
+
+    .nav-btn.active {
+      color: var(--primary-light);
+      font-weight: bold;
+    }
+
+    .nav-btn span.icon {
+      font-size: 20px;
+    }
+
+    /* Container */
+    .app-container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 16px;
+      width: 100%;
+    }
+
+    /* Card */
+    .card {
+      background-color: var(--surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    /* Auth Overlay */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #1E0C38 0%, var(--bg-dark) 100%);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-box {
+      background: var(--surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 24px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: var(--surface-elevated);
+      border-radius: 12px;
+      padding: 4px;
+      margin: 16px 0;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      background: none;
+      color: var(--text-muted);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .auth-tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Forms */
+    .form-group {
+      text-align: right;
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--surface-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-light);
+    }
+
+    /* Post Card */
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--surface-card);
+      border: 1.5px solid var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .post-author-name {
+      font-weight: bold;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .role-badge {
+      background: rgba(157, 78, 221, 0.2);
+      color: var(--primary-light);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .post-time {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .post-content {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      white-space: pre-line;
+    }
+
+    .post-media-box {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #240E3E, #140726);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(157, 78, 221, 0.3);
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid rgba(62, 35, 110, 0.5);
+      padding-top: 10px;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+    }
+
+    .action-btn:hover {
+      color: var(--primary-light);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      max-width: 500px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .chat-bubble {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .chat-bubble.me {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      margin-right: auto;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-bubble.other {
+      background: var(--surface-card);
+      color: var(--text-main);
+      margin-left: auto;
+      border-bottom-left-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Auth Screen Modal -->
+  <div id="authScreen" class="auth-overlay">
+    <div class="auth-box">
+      <div style="font-size: 44px; margin-bottom: 8px;">👑</div>
+      <h2 style="font-weight: 800; font-size: 22px;">تطبيق التواصل العربي</h2>
+      <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">المجتمع العربي المفضل للمشاركة والنقاشات الهادفة</p>
+
+      <div class="auth-tabs">
+        <button id="tabLoginBtn" class="auth-tab-btn active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+        <button id="tabRegBtn" class="auth-tab-btn" onclick="switchAuthTab('register')">حساب جديد</button>
+      </div>
+
+      <div id="authAlert" style="display:none; background:rgba(255,77,109,0.15); border:1px solid var(--danger); color:var(--danger); font-size:12px; padding:8px; border-radius:8px; margin-bottom:12px;"></div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>اسم المستخدم أو البريد الإلكتروني</label>
+          <input type="text" id="loginUsername" class="form-control" placeholder="admin أو اسمك" required>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary">تسجيل الدخول</button>
+        <div style="margin-top: 14px; background: var(--surface-dark); padding: 8px; border-radius: 8px; font-size: 11px; color: var(--text-muted);">
+          حساب الإدارة المبدئي: admin / Admin1234
+          <br><a href="#" onclick="quickFillAdmin()" style="color:var(--primary-light);">ملء تلقائي للمدير</a>
+        </div>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" onsubmit="handleRegister(event)" style="display:none;">
+        <div class="form-group">
+          <label>الاسم الكامل أو الظاهر</label>
+          <input type="text" id="regName" class="form-control" placeholder="مثال: فيصل الخالدي" required>
+        </div>
+        <div class="form-group">
+          <label>اسم المستخدم (إنجليزي)</label>
+          <input type="text" id="regUser" class="form-control" placeholder="faisal22" required>
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="regEmail" class="form-control" placeholder="user@domain.com" required>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="regPass" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div class="form-group">
+          <label>العمر</label>
+          <input type="number" id="regAge" class="form-control" value="22" required>
+        </div>
+        <div style="background:var(--surface-dark); padding:8px; border-radius:8px; font-size:11px; color:var(--gold); margin-bottom:10px;">
+          🎁 مكافأة ترحيبية: ستحصل على 100 نقطة فور إنشاء الحساب!
+        </div>
+        <button type="submit" class="btn-primary">إنشاء الحساب والبدء</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-title">
+      <div class="brand-badge">ع</div>
+      <span>التواصل العربي</span>
+    </div>
+    <div class="header-actions">
+      <div class="points-pill">
+        <span>🪙</span>
+        <span id="userPointsDisplay">0</span>
+      </div>
+      <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:12px; font-weight:bold;">خروج</button>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="app-container">
+    <!-- FEED VIEW -->
+    <section id="viewFeed">
+      <div class="card" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div id="userAvatarSmall" class="avatar">👤</div>
+          <div>
+            <div id="userGreeting" style="font-weight:bold; font-size:14px;">مرحباً بك!</div>
+            <div style="font-size:11px; color:var(--text-muted);">شارك أفكارك وتجاربك في المنصة</div>
+          </div>
+        </div>
+        <button onclick="openModal('createPostModal')" class="btn-primary" style="width:auto; padding:8px 14px; font-size:12px; margin:0;">+ منشور جديد</button>
+      </div>
+
+      <div id="postsList"></div>
+    </section>
+
+    <!-- COMMUNITIES VIEW -->
+    <section id="viewCommunities" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="font-size:16px;">المجتمعات العربية</h3>
+        <button onclick="openModal('createCommModal')" class="btn-primary" style="width:auto; padding:6px 12px; font-size:12px; margin:0;">+ إنشاء مجتمع</button>
+      </div>
+      <div id="communitiesList"></div>
+    </section>
+
+    <!-- CHAT VIEW -->
+    <section id="viewChat" style="display:none;">
+      <h3 style="font-size:16px; margin-bottom:12px;">غرف الحوار والمحادثات</h3>
+      <div id="chatRoomsList"></div>
+      <div id="activeChatBox" style="display:none; margin-top:14px;" class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+          <h4 id="chatRoomTitle" style="font-size:14px;"></h4>
+          <button onclick="closeChatRoom()" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">✕ إغلاق</button>
+        </div>
+        <div id="chatMessagesContainer" style="height:250px; overflow-y:auto; padding:8px; display:flex; flex-direction:column;"></div>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <input type="text" id="chatInput" class="form-control" placeholder="اكتب رسالتك...">
+          <button onclick="sendChatMessage()" class="btn-primary" style="width:auto; margin:0; padding:10px 16px;">إرسال</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORE VIEW -->
+    <section id="viewStore" style="display:none;">
+      <div class="card" style="background: linear-gradient(135deg, var(--surface-card), var(--surface-elevated));">
+        <div style="font-size:12px; color:var(--text-muted);">رصيدك الحالي:</div>
+        <div style="font-size:26px; font-weight:800; color:var(--gold); margin:4px 0;">🪙 <span id="storePointsDisplay">0</span> نقطة</div>
+        <div style="font-size:11px; color:var(--text-muted);">💡 النقاط تمنح مجاناً تقديراً لتفاعلك ومشاركاتك. ليست أموالاً حقيقية.</div>
+      </div>
+      <h3 style="font-size:16px; margin: 16px 0 10px;">الأوسمة والألقاب المتاحة</h3>
+      <div id="storeItemsList"></div>
+    </section>
+
+    <!-- PROFILE VIEW -->
+    <section id="viewProfile" style="display:none;">
+      <div class="card" style="text-align:center;">
+        <div id="profAvatar" style="width:70px; height:70px; border-radius:50%; background:var(--primary-dark); border:2px solid var(--primary-light); font-size:36px; display:flex; align-items:center; justify-content:center; margin:0 auto 10px;">👤</div>
+        <h3 id="profName" style="font-size:17px; font-weight:bold;"></h3>
+        <div id="profUsername" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
+        <div style="display:flex; justify-content:center; gap:8px; margin-bottom:12px;">
+          <span id="profRoleBadge" class="role-badge">عضو</span>
+          <span id="profTitleBadge" class="role-badge" style="background:rgba(255,209,102,0.15); color:var(--gold);">عضو نشط</span>
+        </div>
+        <p id="profBio" style="font-size:13px; color:var(--text-muted); margin-bottom:14px;"></p>
+        <button onclick="openModal('editProfileModal')" class="btn-primary" style="width:auto; margin:0 auto; padding:8px 18px; font-size:13px;">تعديل البيانات</button>
+      </div>
+
+      <div class="card">
+        <h4 style="font-size:14px; margin-bottom:10px;">تتبع بلاغاتي</h4>
+        <div id="myReportsList"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchNav('feed', this)"><span class="icon">🏠</span>الرئيسية</button>
+    <button class="nav-btn" onclick="switchNav('communities', this)"><span class="icon">👥</span>المجتمعات</button>
+    <button class="nav-btn" onclick="switchNav('chat', this)"><span class="icon">💬</span>المحادثات</button>
+    <button class="nav-btn" onclick="switchNav('store', this)"><span class="icon">🛍️</span>المتجر</button>
+    <button class="nav-btn" onclick="switchNav('profile', this)"><span class="icon">👤</span>حسابي</button>
+  </nav>
+
+  <!-- Modals -->
+  <!-- Create Post Modal -->
+  <div id="createPostModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="margin-bottom:12px;">إنشاء منشور جديد</h3>
+      <textarea id="postContentInput" class="form-control" rows="4" placeholder="ماذا يدور في ذهنك؟..."></textarea>
+      <div style="margin: 10px 0;">
+        <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:4px;">إرفاق صورة:</label>
+        <input type="checkbox" id="attachMediaCheckbox"> إرفاق بطاقة وسائط توضيحية
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button onclick="submitNewPost()" class="btn-primary" style="margin:0;">نشر (+10 نقاط)</button>
+        <button onclick="closeModal('createPostModal')" class="btn-primary" style="margin:0; background:var(--surface-dark); color:var(--text-muted);">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Community Modal -->
+  <div id="createCommModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="margin-bottom:12px;">تأسيس مجتمع جديد</h3>
+      <div class="form-group">
+        <label>اسم المجتمع</label>
+        <input type="text" id="commNameInput" class="form-control" placeholder="ملتقى المبدعين">
+      </div>
+      <div class="form-group">
+        <label>الوصف والاهتمامات</label>
+        <textarea id="commDescInput" class="form-control" rows="2" placeholder="أهداف المجتمع..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>رمز الأيقونة</label>
+        <input type="text" id="commEmojiInput" class="form-control" value="🏛️">
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button onclick="submitNewCommunity()" class="btn-primary" style="margin:0;">إنشاء (+20 نقطة)</button>
+        <button onclick="closeModal('createCommModal')" class="btn-primary" style="margin:0; background:var(--surface-dark); color:var(--text-muted);">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="margin-bottom:12px;">تعديل الملف الشخصي</h3>
+      <div class="form-group">
+        <label>الاسم الظاهر</label>
+        <input type="text" id="editNameInput" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>النبذة التعريفية</label>
+        <textarea id="editBioInput" class="form-control" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>الرمز أو الصورة الرمزية</label>
+        <input type="text" id="editAvatarInput" class="form-control">
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button onclick="saveProfile()" class="btn-primary" style="margin:0;">حفظ</button>
+        <button onclick="closeModal('editProfileModal')" class="btn-primary" style="margin:0; background:var(--surface-dark); color:var(--text-muted);">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // LocalStorage Database Keys
+    const DB_USERS = 'arabicsocial_users';
+    const DB_POSTS = 'arabicsocial_posts';
+    const DB_COMMUNITIES = 'arabicsocial_communities';
+    const DB_MESSAGES = 'arabicsocial_messages';
+    const DB_REPORTS = 'arabicsocial_reports';
+    const DB_SESSION = 'arabicsocial_session';
+
+    // Seed admin if not present (ZERO dummy users or fake posts!)
+    function initDatabase() {
+      let users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+      if (users.length === 0) {
+        users.push({
+          id: 1,
+          username: 'admin',
+          email: 'admin@arabicsocial.app',
+          displayName: 'الإدارة العليا',
+          password: 'Admin1234',
+          avatar: '🛡️',
+          bio: 'الحساب الرسمي لإدارة تطبيق التواصل العربي',
+          role: 'ADMIN',
+          points: 9999,
+          activeBadge: '⚡',
+          activeTitle: 'مسؤول النظام'
+        });
+        localStorage.setItem(DB_USERS, JSON.stringify(users));
+      }
+      if (!localStorage.getItem(DB_POSTS)) localStorage.setItem(DB_POSTS, '[]');
+      if (!localStorage.getItem(DB_COMMUNITIES)) localStorage.setItem(DB_COMMUNITIES, '[]');
+      if (!localStorage.getItem(DB_MESSAGES)) localStorage.setItem(DB_MESSAGES, '[]');
+      if (!localStorage.getItem(DB_REPORTS)) localStorage.setItem(DB_REPORTS, '[]');
+    }
+
+    initDatabase();
+
+    let currentUser = null;
+
+    // Check Session on Start
+    function checkSession() {
+      const sessId = localStorage.getItem(DB_SESSION);
+      if (sessId) {
+        const users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+        const u = users.find(x => x.id == sessId);
+        if (u) {
+          currentUser = u;
+          document.getElementById('authScreen').style.display = 'none';
+          updateUserUI();
+          renderFeed();
+          renderCommunities();
+          renderStore();
+          return;
+        }
+      }
+      document.getElementById('authScreen').style.display = 'flex';
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById('tabLoginBtn').classList.toggle('active', tab === 'login');
+      document.getElementById('tabRegBtn').classList.toggle('active', tab === 'register');
+      document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+      document.getElementById('authAlert').style.display = 'none';
+    }
+
+    function quickFillAdmin() {
+      document.getElementById('loginUsername').value = 'admin';
+      document.getElementById('loginPassword').value = 'Admin1234';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const iden = document.getElementById('loginUsername').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+      const users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+      const u = users.find(x => (x.username === iden || x.email === iden) && x.password === pass);
+
+      if (!u) {
+        showAuthAlert('اسم المستخدم أو كلمة المرور غير صحيحة');
+        return;
+      }
+      if (u.isBanned) {
+        showAuthAlert('هذا الحساب محظور: ' + (u.banReason || 'مخالفة الشروط'));
+        return;
+      }
+
+      currentUser = u;
+      localStorage.setItem(DB_SESSION, u.id);
+      document.getElementById('authScreen').style.display = 'none';
+      updateUserUI();
+      renderFeed();
+      renderCommunities();
+      renderStore();
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const username = document.getElementById('regUser').value.trim().toLowerCase();
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('regPass').value;
+      const age = parseInt(document.getElementById('regAge').value) || 20;
+
+      const users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+      if (users.find(x => x.username === username)) {
+        showAuthAlert('اسم المستخدم مسجل مسبقاً');
+        return;
+      }
+
+      const newUser = {
+        id: Date.now(),
+        username: username,
+        email: email,
+        displayName: name,
+        password: pass,
+        avatar: '👤',
+        bio: 'عضو جديد في منصة التواصل العربي',
+        age: age,
+        role: 'MEMBER',
+        points: 100, // Welcome points
+        activeBadge: '🌟',
+        activeTitle: 'عضو جديد'
+      };
+
+      users.push(newUser);
+      localStorage.setItem(DB_USERS, JSON.stringify(users));
+      currentUser = newUser;
+      localStorage.setItem(DB_SESSION, newUser.id);
+      document.getElementById('authScreen').style.display = 'none';
+      updateUserUI();
+      renderFeed();
+      renderCommunities();
+      renderStore();
+    }
+
+    function showAuthAlert(msg) {
+      const a = document.getElementById('authAlert');
+      a.innerText = msg;
+      a.style.display = 'block';
+    }
+
+    function logout() {
+      localStorage.removeItem(DB_SESSION);
+      currentUser = null;
+      location.reload();
+    }
+
+    function updateUserUI() {
+      if (!currentUser) return;
+      document.getElementById('userPointsDisplay').innerText = currentUser.points;
+      document.getElementById('storePointsDisplay').innerText = currentUser.points;
+      document.getElementById('userGreeting').innerText = 'مرحباً، ' + currentUser.displayName + '!';
+      document.getElementById('userAvatarSmall').innerText = currentUser.avatar;
+
+      // Profile View
+      document.getElementById('profAvatar').innerText = currentUser.avatar;
+      document.getElementById('profName').innerText = currentUser.displayName;
+      document.getElementById('profUsername').innerText = '@' + currentUser.username;
+      document.getElementById('profRoleBadge').innerText = currentUser.role;
+      document.getElementById('profTitleBadge').innerText = currentUser.activeTitle;
+      document.getElementById('profBio').innerText = currentUser.bio;
+      renderMyReports();
+    }
+
+    // Switch Navigation Views
+    function switchNav(viewName, btn) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.getElementById('viewFeed').style.display = viewName === 'feed' ? 'block' : 'none';
+      document.getElementById('viewCommunities').style.display = viewName === 'communities' ? 'block' : 'none';
+      document.getElementById('viewChat').style.display = viewName === 'chat' ? 'block' : 'none';
+      document.getElementById('viewStore').style.display = viewName === 'store' ? 'block' : 'none';
+      document.getElementById('viewProfile').style.display = viewName === 'profile' ? 'block' : 'none';
+
+      if (viewName === 'feed') renderFeed();
+      if (viewName === 'communities') renderCommunities();
+      if (viewName === 'chat') renderChatRooms();
+      if (viewName === 'profile') updateUserUI();
+    }
+
+    // Modal Handlers
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    // FEED RENDERING
+    function renderFeed() {
+      const posts = JSON.parse(localStorage.getItem(DB_POSTS) || '[]');
+      const container = document.getElementById('postsList');
+
+      if (posts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📰</div>
+            <h3>لا توجد منشورات بعد</h3>
+            <p>كن أول من يشارك أفكاره وتجاربه مع أعضاء المجتمع العربي!</p>
+            <button onclick="openModal('createPostModal')" class="btn-primary" style="width:auto; margin:0 auto; padding:8px 18px;">+ إنشاء أول منشور</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = posts.filter(p => !p.isHidden).reverse().map(p => `
+        <div class="card">
+          <div class="post-header">
+            <div class="avatar">${p.authorAvatar || '👤'}</div>
+            <div style="flex:1;">
+              <div class="post-author-name">
+                ${p.authorName}
+                <span class="role-badge">${p.authorRole || 'عضو'}</span>
+              </div>
+              <div class="post-time">${new Date(p.createdAt).toLocaleDateString('ar-EG')}</div>
+            </div>
+            <button onclick="reportItem('POST', ${p.id}, '${p.content.slice(0, 30)}')" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">🚩 إبلاغ</button>
+          </div>
+          <div class="post-content">${p.content}</div>
+          ${p.mediaType === 'IMAGE' ? '<div class="post-media-box">📷 صورة مرفقة بالمنشور</div>' : ''}
+          <div class="post-actions">
+            <button class="action-btn" onclick="toggleLike(${p.id})">❤️ ${p.likesCount || 0} إعجاب</button>
+            <button class="action-btn" onclick="alert('خاصية مشاركة الرابط منسوخة!')">🔗 مشاركة</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function submitNewPost() {
+      const content = document.getElementById('postContentInput').value.trim();
+      const hasMedia = document.getElementById('attachMediaCheckbox').checked;
+      if (!content) return;
+
+      const posts = JSON.parse(localStorage.getItem(DB_POSTS) || '[]');
+      posts.push({
+        id: Date.now(),
+        authorId: currentUser.id,
+        authorName: currentUser.displayName,
+        authorAvatar: currentUser.avatar,
+        authorRole: currentUser.role,
+        content: content,
+        mediaType: hasMedia ? 'IMAGE' : 'NONE',
+        likesCount: 0,
+        createdAt: Date.now()
+      });
+      localStorage.setItem(DB_POSTS, JSON.stringify(posts));
+
+      // Reward points
+      currentUser.points += 10;
+      updateUserInDB();
+
+      closeModal('createPostModal');
+      document.getElementById('postContentInput').value = '';
+      renderFeed();
+      alert('تم نشر منشورك بنجاح! (+10 نقاط) 🎉');
+    }
+
+    function toggleLike(postId) {
+      const posts = JSON.parse(localStorage.getItem(DB_POSTS) || '[]');
+      const p = posts.find(x => x.id === postId);
+      if (p) {
+        p.likesCount = (p.likesCount || 0) + 1;
+        localStorage.setItem(DB_POSTS, JSON.stringify(posts));
+        renderFeed();
+      }
+    }
+
+    // COMMUNITIES RENDERING
+    function renderCommunities() {
+      const comms = JSON.parse(localStorage.getItem(DB_COMMUNITIES) || '[]');
+      const container = document.getElementById('communitiesList');
+
+      if (comms.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🏛️</div>
+            <h3>لا توجد مجتمعات بعد</h3>
+            <p>كن رائداً وابدأ أول مجتمع عربي يجمع المهتمين بمجالك!</p>
+            <button onclick="openModal('createCommModal')" class="btn-primary" style="width:auto; margin:0 auto; padding:8px 18px;">+ إنشاء مجتمعك الأول</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = comms.map(c => `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="font-size:32px;">${c.iconEmoji}</div>
+              <div>
+                <h4 style="font-size:15px; font-weight:bold;">${c.name}</h4>
+                <div style="font-size:11px; color:var(--text-muted);">${c.membersCount || 1} عضو • بواسطة: ${c.creatorName}</div>
+              </div>
+            </div>
+            <button onclick="enterCommunity(${c.id})" class="btn-primary" style="width:auto; padding:6px 12px; font-size:12px; margin:0;">دخول</button>
+          </div>
+          <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">${c.description}</p>
+        </div>
+      `).join('');
+    }
+
+    function submitNewCommunity() {
+      const name = document.getElementById('commNameInput').value.trim();
+      const desc = document.getElementById('commDescInput').value.trim();
+      const emoji = document.getElementById('commEmojiInput').value.trim() || '🏛️';
+      if (!name || !desc) return;
+
+      const comms = JSON.parse(localStorage.getItem(DB_COMMUNITIES) || '[]');
+      comms.push({
+        id: Date.now(),
+        name: name,
+        description: desc,
+        iconEmoji: emoji,
+        creatorName: currentUser.displayName,
+        membersCount: 1,
+        createdAt: Date.now()
+      });
+      localStorage.setItem(DB_COMMUNITIES, JSON.stringify(comms));
+
+      currentUser.points += 20;
+      updateUserInDB();
+
+      closeModal('createCommModal');
+      document.getElementById('commNameInput').value = '';
+      document.getElementById('commDescInput').value = '';
+      renderCommunities();
+      alert('تم تأسيس المجتمع بنجاح! (+20 نقطة) 🚀');
+    }
+
+    // CHAT RENDERING
+    let activeRoomId = null;
+    function renderChatRooms() {
+      const comms = JSON.parse(localStorage.getItem(DB_COMMUNITIES) || '[]');
+      const container = document.getElementById('chatRoomsList');
+
+      if (comms.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">💬</div>
+            <h3>لا توجد غرف حوار متاحة</h3>
+            <p>انضم إلى أو أنشئ مجتمعاً للوصول إلى غرف المحادثة المباشرة!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = comms.map(c => `
+        <div class="card" onclick="openChatRoom(${c.id}, '${c.name}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="font-size:26px;">${c.iconEmoji}</div>
+            <div>
+              <div style="font-weight:bold; font-size:14px;">غرفة: ${c.name}</div>
+              <div style="font-size:11px; color:var(--text-muted);">نقاش عام لجميع الأعضاء</div>
+            </div>
+          </div>
+          <span>⬅️</span>
+        </div>
+      `).join('');
+    }
+
+    function openChatRoom(roomId, title) {
+      activeRoomId = roomId;
+      document.getElementById('activeChatBox').style.display = 'block';
+      document.getElementById('chatRoomTitle').innerText = title;
+      renderMessages();
+    }
+
+    function closeChatRoom() {
+      document.getElementById('activeChatBox').style.display = 'none';
+      activeRoomId = null;
+    }
+
+    function renderMessages() {
+      if (!activeRoomId) return;
+      const allMsgs = JSON.parse(localStorage.getItem(DB_MESSAGES) || '[]');
+      const msgs = allMsgs.filter(m => m.roomId == activeRoomId);
+      const container = document.getElementById('chatMessagesContainer');
+
+      if (msgs.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:12px; margin:auto;">الغرفة هادئة... ابدأ بإرسال أول رسالة!</div>';
+        return;
+      }
+
+      container.innerHTML = msgs.map(m => {
+        const isMe = m.senderId === currentUser.id;
+        return `
+          <div class="chat-bubble ${isMe ? 'me' : 'other'}">
+            ${!isMe ? `<div style="font-size:10px; color:var(--gold); font-weight:bold;">${m.senderName}</div>` : ''}
+            <div>${m.content}</div>
+          </div>
+        `;
+      }).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendChatMessage() {
+      const inp = document.getElementById('chatInput');
+      const text = inp.value.trim();
+      if (!text || !activeRoomId) return;
+
+      const allMsgs = JSON.parse(localStorage.getItem(DB_MESSAGES) || '[]');
+      allMsgs.push({
+        id: Date.now(),
+        roomId: activeRoomId,
+        senderId: currentUser.id,
+        senderName: currentUser.displayName,
+        content: text,
+        timestamp: Date.now()
+      });
+      localStorage.setItem(DB_MESSAGES, JSON.stringify(allMsgs));
+      inp.value = '';
+      renderMessages();
+    }
+
+    // STORE
+    const STORE_ITEMS = [
+      { id: 1, name: 'تاج التميز الذهبي', desc: 'وسام ملكي لامع يظهر بجانب اسمك', cost: 50, icon: '👑', type: 'BADGE' },
+      { id: 2, name: 'شعلة الحماس', desc: 'وسام الأعضاء الأكثر نشاطاً في المنصة', cost: 30, icon: '🔥', type: 'BADGE' },
+      { id: 3, name: 'فيلسوف المجتمع', desc: 'لقب مميز لأصحاب النقاشات والآراء العميقة', cost: 40, icon: '🏷️', type: 'TITLE' }
+    ];
+
+    function renderStore() {
+      const container = document.getElementById('storeItemsList');
+      container.innerHTML = STORE_ITEMS.map(item => `
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="font-size:28px;">${item.icon}</div>
+            <div>
+              <div style="font-weight:bold; font-size:14px;">${item.name}</div>
+              <div style="font-size:11px; color:var(--text-muted);">${item.desc}</div>
+              <div style="font-size:12px; color:var(--gold); font-weight:bold; margin-top:2px;">🪙 ${item.cost} نقطة</div>
+            </div>
+          </div>
+          <button onclick="buyStoreItem(${item.id})" class="btn-primary" style="width:auto; padding:6px 14px; font-size:12px; margin:0;">شراء</button>
+        </div>
+      `).join('');
+    }
+
+    function buyStoreItem(itemId) {
+      const item = STORE_ITEMS.find(x => x.id === itemId);
+      if (!item) return;
+      if (currentUser.points < item.cost) {
+        alert('رصيد نقاطك غير كافٍ. رصيدك الحالي: ' + currentUser.points);
+        return;
+      }
+      currentUser.points -= item.cost;
+      if (item.type === 'BADGE') currentUser.activeBadge = item.icon;
+      if (item.type === 'TITLE') currentUser.activeTitle = item.name;
+      updateUserInDB();
+      alert('تهانينا! تم شراء وتفعيل ' + item.name + ' في ملفك الشخصي 🎉');
+    }
+
+    // PROFILE & REPORTS
+    function saveProfile() {
+      currentUser.displayName = document.getElementById('editNameInput').value.trim() || currentUser.displayName;
+      currentUser.bio = document.getElementById('editBioInput').value.trim();
+      currentUser.avatar = document.getElementById('editAvatarInput').value.trim() || currentUser.avatar;
+      updateUserInDB();
+      closeModal('editProfileModal');
+      updateUserUI();
+    }
+
+    function reportItem(targetType, targetId, summary) {
+      const reason = prompt('حدد سبب الإبلاغ:\n1. محتوى غير لائق\n2. سب أو تنمر\n3. سبام واحتيال');
+      if (!reason) return;
+
+      const reports = JSON.parse(localStorage.getItem(DB_REPORTS) || '[]');
+      reports.push({
+        id: Date.now(),
+        reporterId: currentUser.id,
+        reporterName: currentUser.displayName,
+        targetType: targetType,
+        targetId: targetId,
+        targetSummary: summary,
+        reason: reason,
+        status: 'NEW',
+        createdAt: Date.now()
+      });
+      localStorage.setItem(DB_REPORTS, JSON.stringify(reports));
+      alert('تم إرسال البلاغ لإدارة المنصة بنجاح.');
+      renderMyReports();
+    }
+
+    function renderMyReports() {
+      const reports = JSON.parse(localStorage.getItem(DB_REPORTS) || '[]').filter(r => r.reporterId === currentUser.id);
+      const container = document.getElementById('myReportsList');
+      if (reports.length === 0) {
+        container.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">لا توجد بلاغات مرسلة.</div>';
+        return;
+      }
+      container.innerHTML = reports.map(r => `
+        <div style="background:var(--surface-dark); padding:10px; border-radius:8px; margin-bottom:8px; font-size:12px;">
+          <div style="display:flex; justify-content:space-between;">
+            <strong>بلاغ #${r.id} (${r.targetType})</strong>
+            <span style="color:${r.status === 'RESOLVED' ? 'var(--emerald)' : 'var(--gold)'}; font-weight:bold;">${r.status}</span>
+          </div>
+          <div style="color:var(--text-muted); margin-top:4px;">السبب: ${r.reason}</div>
+          ${r.adminDecision ? `<div style="color:var(--emerald); margin-top:4px;">قرار الإدارة: ${r.adminDecision}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function updateUserInDB() {
+      const users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+      const idx = users.findIndex(x => x.id === currentUser.id);
+      if (idx !== -1) {
+        users[idx] = currentUser;
+        localStorage.setItem(DB_USERS, JSON.stringify(users));
+      }
+      updateUserUI();
+    }
+
+    // Initialize check
+    checkSession();
+  </script>
+</body>
+</html>

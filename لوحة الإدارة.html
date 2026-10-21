@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة إدارة تطبيق التواصل العربي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090412;
+      --surface-dark: #120922;
+      --surface-elevated: #1A0D30;
+      --surface-card: #22123F;
+      --border-color: #381E63;
+      --primary: #9D4EDD;
+      --primary-light: #C77DFF;
+      --admin-red: #FF4D6D;
+      --admin-orange: #FF9F1C;
+      --gold: #FFD166;
+      --emerald: #06D6A0;
+      --text-main: #F9F7FD;
+      --text-muted: #AFA2C7;
+      --font-family: 'Cairo', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Admin Top Bar */
+    header {
+      background: var(--surface-dark);
+      border-bottom: 2px solid var(--admin-red);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .admin-badge {
+      background: var(--admin-red);
+      color: white;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    /* Layout */
+    .admin-wrapper {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: var(--surface-dark);
+      border-left: 1px solid var(--border-color);
+      padding: 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: right;
+      width: 100%;
+    }
+
+    .sidebar-btn.active, .sidebar-btn:hover {
+      background: var(--surface-card);
+      color: var(--text-main);
+    }
+
+    .sidebar-btn.active {
+      border-right: 3px solid var(--admin-red);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px;
+      max-width: 1100px;
+    }
+
+    /* Cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .stat-title { font-size: 13px; color: var(--text-muted); }
+    .stat-value { font-size: 28px; font-weight: 800; color: white; margin-top: 6px; }
+
+    .card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* Table / List */
+    .item-row {
+      background: var(--surface-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-action {
+      background: var(--surface-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-action.danger { background: rgba(255,77,109,0.2); border-color: var(--admin-red); color: var(--admin-red); }
+    .btn-action.success { background: rgba(6,214,160,0.2); border-color: var(--emerald); color: var(--emerald); }
+
+    /* Auth Gate */
+    .admin-auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-dark);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .admin-login-box {
+      background: var(--surface-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 30px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-size: 14px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    .btn-login {
+      width: 100%;
+      background: var(--admin-red);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .admin-wrapper { flex-direction: column; }
+      .sidebar { width: 100%; border-left: none; border-bottom: 1px solid var(--border-color); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Login Guard -->
+  <div id="adminAuthGate" class="admin-auth-overlay">
+    <div class="admin-login-box">
+      <div style="font-size: 42px; margin-bottom: 10px;">🛡️</div>
+      <h2 style="font-size: 20px; font-weight: 800;">بوابة الإدارة المستقلة</h2>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 20px;">منطقة محمية مخصصة لمديري ومسؤولي النظام فقط</p>
+
+      <div id="loginAlert" style="display:none; background:rgba(255,77,109,0.2); color:var(--admin-red); font-size:12px; padding:8px; border-radius:8px; margin-bottom:12px;"></div>
+
+      <form onsubmit="handleAdminLogin(event)">
+        <input type="text" id="admUsername" class="form-control" placeholder="اسم المستخدم الإداري" value="admin" required>
+        <input type="password" id="admPassword" class="form-control" placeholder="كلمة المرور السرية" value="Admin1234" required>
+        <button type="submit" class="btn-login">تحقق ودخول الإدارة</button>
+      </form>
+
+      <div style="margin-top: 16px;">
+        <a href="تطبيق التواصل العربي.html" style="color:var(--text-muted); font-size:12px; text-decoration:none;">⬅ العودة لتطبيق المستخدمين</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="admin-logo">
+      <span>🛡️</span>
+      <span>لوحة التحكم والإدارة</span>
+      <span class="admin-badge">ADMIN</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span id="adminNameDisplay" style="font-size:13px; color:var(--gold);"></span>
+      <a href="تطبيق التواصل العربي.html" style="color:var(--primary-light); font-size:12px; text-decoration:none; font-weight:bold;">📱 فتح التطبيق</a>
+      <button onclick="adminLogout()" style="background:none; border:none; color:var(--admin-red); font-weight:bold; cursor:pointer; font-size:13px;">خروج</button>
+    </div>
+  </header>
+
+  <div class="admin-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <button class="sidebar-btn active" onclick="switchTab('dashboard', this)">📊 الإحصائيات العامة</button>
+      <button class="sidebar-btn" onclick="switchTab('reports', this)">🚩 البلاغات والمخالفات</button>
+      <button class="sidebar-btn" onclick="switchTab('users', this)">👥 إدارة المستخدمين</button>
+      <button class="sidebar-btn" onclick="switchTab('communities', this)">🏛️ إدارة المجتمعات</button>
+      <button class="sidebar-btn" onclick="switchTab('posts', this)">📝 المنشورات والمحتوى</button>
+      <button class="sidebar-btn" onclick="switchTab('audit', this)">📜 سجل الإجراءات (Audit)</button>
+    </aside>
+
+    <!-- Content -->
+    <main class="content-area">
+      <!-- DASHBOARD TAB -->
+      <section id="tabDashboard">
+        <h2 style="font-size:18px; margin-bottom:16px;">المؤشرات الحية للمنصة</h2>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-title">إجمالي الحسابات</div>
+            <div class="stat-value" id="statUsers">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">إجمالي المنشورات</div>
+            <div class="stat-value" id="statPosts">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">المجتمعات الفعالة</div>
+            <div class="stat-value" id="statCommunities">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">البلاغات المعلقة</div>
+            <div class="stat-value" id="statReports" style="color:var(--admin-red);">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:15px; margin-bottom:10px;">إرشادات الأمان والسياسات الإدارية</h3>
+          <p style="font-size:13px; color:var(--text-muted); line-height:1.7;">
+            - تخضع جميع العمليات الإدارية (حظر المستخدمين، حذف المجتمعات، إخفاء المنشورات) لتوثيق آلي دقيق في سجل العمليات.<br>
+            - يُمنع اتخاذ إجراءات عقابية دون وجود سبب موثق وواضح للمخالفة.<br>
+            - البلاغات المعالجة تظهر نتيجتها للمستخدم المبلغ في صفحة «بلاغاتي» لتعزيز الشفافية والموثوقية.
+          </p>
+        </div>
+      </section>
+
+      <!-- REPORTS TAB -->
+      <section id="tabReports" style="display:none;">
+        <h2 style="font-size:18px; margin-bottom:16px;">مركز مراجعة البلاغات</h2>
+        <div id="adminReportsContainer"></div>
+      </section>
+
+      <!-- USERS TAB -->
+      <section id="tabUsers" style="display:none;">
+        <h2 style="font-size:18px; margin-bottom:16px;">إدارة وحظر المستخدمين</h2>
+        <input type="text" id="userSearchInput" oninput="filterUsers()" class="form-control" placeholder="ابحث باسم المستخدم أو البريد الإلكتروني...">
+        <div id="adminUsersContainer"></div>
+      </section>
+
+      <!-- COMMUNITIES TAB -->
+      <section id="tabCommunities" style="display:none;">
+        <h2 style="font-size:18px; margin-bottom:16px;">إدارة المجتمعات المخالفة</h2>
+        <div id="adminCommunitiesContainer"></div>
+      </section>
+
+      <!-- POSTS TAB -->
+      <section id="tabPosts" style="display:none;">
+        <h2 style="font-size:18px; margin-bottom:16px;">مراجعة وحذف المنشورات</h2>
+        <div id="adminPostsContainer"></div>
+      </section>
+
+      <!-- AUDIT TAB -->
+      <section id="tabAudit" style="display:none;">
+        <h2 style="font-size:18px; margin-bottom:16px;">سجل القرارات والإجراءات الإدارية (Audit Log)</h2>
+        <div id="adminAuditContainer"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const DB_USERS = 'arabicsocial_users';
+    const DB_POSTS = 'arabicsocial_posts';
+    const DB_COMMUNITIES = 'arabicsocial_communities';
+    const DB_REPORTS = 'arabicsocial_reports';
+    const DB_AUDIT = 'arabicsocial_audit_logs';
+
+    let currentAdmin = null;
+
+    function checkAdminAuth() {
+      const stored = sessionStorage.getItem('arabicsocial_admin_session');
+      if (stored) {
+        currentAdmin = JSON.parse(stored);
+        document.getElementById('adminAuthGate').style.display = 'none';
+        document.getElementById('adminNameDisplay').innerText = 'المسؤول: ' + currentAdmin.displayName;
+        loadDashboardStats();
+        return;
+      }
+      document.getElementById('adminAuthGate').style.display = 'flex';
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('admUsername').value.trim();
+      const p = document.getElementById('admPassword').value;
+
+      const users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+      const admin = users.find(x => (x.username === u || x.email === u) && x.password === p && x.role === 'ADMIN');
+
+      if (!admin) {
+        document.getElementById('loginAlert').innerText = 'خطأ: بيانات الدخول غير صحيحة أو الحساب ليس له صلاحيات ADMIN العليا';
+        document.getElementById('loginAlert').style.display = 'block';
+        return;
+      }
+
+      currentAdmin = admin;
+      sessionStorage.setItem('arabicsocial_admin_session', JSON.stringify(admin));
+      document.getElementById('adminAuthGate').style.display = 'none';
+      document.getElementById('adminNameDisplay').innerText = 'المسؤول: ' + admin.displayName;
+      logAuditAction('تسجيل دخول إداري', 'لوحة التحكم', 'جلسة إدارة جديدة');
+      loadDashboardStats();
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('arabicsocial_admin_session');
+      location.reload();
+    }
+
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.getElementById('tabDashboard').style.display = tabName === 'dashboard' ? 'block' : 'none';
+      document.getElementById('tabReports').style.display = tabName === 'reports' ? 'block' : 'none';
+      document.getElementById('tabUsers').style.display = tabName === 'users' ? 'block' : 'none';
+      document.getElementById('tabCommunities').style.display = tabName === 'communities' ? 'block' : 'none';
+      document.getElementById('tabPosts').style.display = tabName === 'posts' ? 'block' : 'none';
+      document.getElementById('tabAudit').style.display = tabName === 'audit' ? 'block' : 'none';
+
+      if (tabName === 'dashboard') loadDashboardStats();
+      if (tabName === 'reports') loadReports();
+      if (tabName === 'users') loadUsers();
+      if (tabName === 'communities') loadCommunities();
+      if (tabName === 'posts') loadPosts();
+      if (tabName === 'audit') loadAuditLogs();
+    }
+
+    function loadDashboardStats() {
+      const users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+      const posts = JSON.parse(localStorage.getItem(DB_POSTS) || '[]');
+      const comms = JSON.parse(localStorage.getItem(DB_COMMUNITIES) || '[]');
+      const reports = JSON.parse(localStorage.getItem(DB_REPORTS) || '[]');
+
+      document.getElementById('statUsers').innerText = users.length;
+      document.getElementById('statPosts').innerText = posts.length;
+      document.getElementById('statCommunities').innerText = comms.length;
+      document.getElementById('statReports').innerText = reports.filter(r => r.status === 'NEW').length;
+    }
+
+    // REPORTS
+    function loadReports() {
+      const reports = JSON.parse(localStorage.getItem(DB_REPORTS) || '[]');
+      const c = document.getElementById('adminReportsContainer');
+
+      if (reports.length === 0) {
+        c.innerHTML = '<div class="card" style="text-align:center; color:var(--text-muted);">لا توجد أي بلاغات مسجلة حتى الآن.</div>';
+        return;
+      }
+
+      c.innerHTML = reports.map(r => `
+        <div class="item-row">
+          <div>
+            <div style="font-weight:bold; font-size:14px;">بلاغ #${r.id} على [${r.targetType}] - ${r.reason}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">المحتوى: "${r.targetSummary}"</div>
+            <div style="font-size:11px; color:var(--gold);">المُبلّغ: ${r.reporterName} | الحالة: ${r.status}</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button onclick="resolveReport(${r.id}, 'RESOLVED')" class="btn-action success">قبول وحل ✓</button>
+            <button onclick="resolveReport(${r.id}, 'REJECTED')" class="btn-action danger">رفض البلاغ ✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function resolveReport(repId, status) {
+      const decision = prompt('أدخل تفاصيل وملاحظات القرار الإداري:');
+      if (!decision) return;
+
+      const reports = JSON.parse(localStorage.getItem(DB_REPORTS) || '[]');
+      const r = reports.find(x => x.id === repId);
+      if (r) {
+        r.status = status;
+        r.adminDecision = decision;
+        localStorage.setItem(DB_REPORTS, JSON.stringify(reports));
+        logAuditAction('معالجة بلاغ #' + repId, r.targetSummary, 'القرار: ' + status + ' | ' + decision);
+        loadReports();
+        loadDashboardStats();
+      }
+    }
+
+    // USERS
+    function loadUsers(filterText = '') {
+      const users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+      const c = document.getElementById('adminUsersContainer');
+
+      const filtered = users.filter(u => u.username.includes(filterText) || u.displayName.includes(filterText) || u.email.includes(filterText));
+
+      c.innerHTML = filtered.map(u => `
+        <div class="item-row">
+          <div>
+            <div style="font-weight:bold; font-size:14px;">${u.displayName} (@${u.username}) <span class="admin-badge" style="background:${u.isBanned ? 'var(--admin-red)' : 'var(--primary)'}">${u.role} ${u.isBanned ? '(محظور)' : ''}</span></div>
+            <div style="font-size:11px; color:var(--text-muted);">${u.email} • نقاط: ${u.points}</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button onclick="toggleUserBan(${u.id}, ${!u.isBanned})" class="btn-action ${u.isBanned ? 'success' : 'danger'}">
+              ${u.isBanned ? 'فك الحظر' : 'حظر الحساب'}
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterUsers() {
+      const txt = document.getElementById('userSearchInput').value.trim().toLowerCase();
+      loadUsers(txt);
+    }
+
+    function toggleUserBan(uid, banStatus) {
+      const reason = prompt(banStatus ? 'حدد سبب الحظر الموثق:' : 'سبب فك الحظر:');
+      if (!reason) return;
+
+      const users = JSON.parse(localStorage.getItem(DB_USERS) || '[]');
+      const u = users.find(x => x.id === uid);
+      if (u) {
+        u.isBanned = banStatus;
+        u.banReason = banStatus ? reason : '';
+        localStorage.setItem(DB_USERS, JSON.stringify(users));
+        logAuditAction(banStatus ? 'حظر مستخدم' : 'فك حظر مستخدم', '@' + u.username, reason);
+        loadUsers();
+      }
+    }
+
+    // COMMUNITIES
+    function loadCommunities() {
+      const comms = JSON.parse(localStorage.getItem(DB_COMMUNITIES) || '[]');
+      const c = document.getElementById('adminCommunitiesContainer');
+
+      if (comms.length === 0) {
+        c.innerHTML = '<div class="card" style="text-align:center; color:var(--text-muted);">لا توجد مجتمعات منشأة بعد.</div>';
+        return;
+      }
+
+      c.innerHTML = comms.map(comm => `
+        <div class="item-row">
+          <div>
+            <div style="font-weight:bold; font-size:14px;">${comm.iconEmoji} ${comm.name}</div>
+            <div style="font-size:12px; color:var(--text-muted);">${comm.description}</div>
+            <div style="font-size:11px; color:var(--gold);">المؤسس: ${comm.creatorName} • ${comm.membersCount} عضو</div>
+          </div>
+          <button onclick="deleteCommunityAdmin(${comm.id})" class="btn-action danger">حذف المجتمع نهائياً</button>
+        </div>
+      `).join('');
+    }
+
+    function deleteCommunityAdmin(commId) {
+      if (!confirm('هل أنت متأكد من حذف هذا المجتمع؟ هذا الإجراء غير قابل للتراجع.')) return;
+      const reason = prompt('سبب الحذف:') || 'مخالفة معايير المنصة';
+
+      let comms = JSON.parse(localStorage.getItem(DB_COMMUNITIES) || '[]');
+      const comm = comms.find(x => x.id === commId);
+      comms = comms.filter(x => x.id !== commId);
+      localStorage.setItem(DB_COMMUNITIES, JSON.stringify(comms));
+
+      logAuditAction('حذف مجتمع نهائياً', comm ? comm.name : ('#' + commId), reason);
+      loadCommunities();
+      loadDashboardStats();
+    }
+
+    // POSTS
+    function loadPosts() {
+      const posts = JSON.parse(localStorage.getItem(DB_POSTS) || '[]');
+      const c = document.getElementById('adminPostsContainer');
+
+      if (posts.length === 0) {
+        c.innerHTML = '<div class="card" style="text-align:center; color:var(--text-muted);">لا توجد منشورات في النظام.</div>';
+        return;
+      }
+
+      c.innerHTML = posts.map(p => `
+        <div class="item-row">
+          <div style="flex:1;">
+            <div style="font-weight:bold; font-size:13px;">منشور #${p.id} - الكاتب: ${p.authorName} ${p.isHidden ? '<span style="color:var(--admin-orange);">(مخفي)</span>' : ''}</div>
+            <div style="font-size:13px; color:var(--text-main); margin-top:4px;">"${p.content}"</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button onclick="toggleHidePost(${p.id}, ${!p.isHidden})" class="btn-action">${p.isHidden ? 'إظهار' : 'إخفاء'}</button>
+            <button onclick="deletePostAdmin(${p.id})" class="btn-action danger">حذف</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleHidePost(pid, hide) {
+      const posts = JSON.parse(localStorage.getItem(DB_POSTS) || '[]');
+      const p = posts.find(x => x.id === pid);
+      if (p) {
+        p.isHidden = hide;
+        localStorage.setItem(DB_POSTS, JSON.stringify(posts));
+        logAuditAction(hide ? 'إخفاء منشور' : 'إظهار منشور', 'منشور #' + pid, 'إجراء إداري');
+        loadPosts();
+      }
+    }
+
+    function deletePostAdmin(pid) {
+      if (!confirm('حذف هذا المنشور نهائياً؟')) return;
+      let posts = JSON.parse(localStorage.getItem(DB_POSTS) || '[]');
+      posts = posts.filter(x => x.id !== pid);
+      localStorage.setItem(DB_POSTS, JSON.stringify(posts));
+      logAuditAction('حذف منشور نهائياً', 'منشور #' + pid, 'مخالفة المحتوى');
+      loadPosts();
+      loadDashboardStats();
+    }
+
+    // AUDIT LOGS
+    function logAuditAction(action, target, notes) {
+      const logs = JSON.parse(localStorage.getItem(DB_AUDIT) || '[]');
+      logs.unshift({
+        id: Date.now(),
+        admin: currentAdmin ? currentAdmin.displayName : 'المدير',
+        action: action,
+        target: target,
+        notes: notes,
+        time: new Date().toLocaleString('ar-EG')
+      });
+      localStorage.setItem(DB_AUDIT, JSON.stringify(logs));
+    }
+
+    function loadAuditLogs() {
+      const logs = JSON.parse(localStorage.getItem(DB_AUDIT) || '[]');
+      const c = document.getElementById('adminAuditContainer');
+
+      if (logs.length === 0) {
+        c.innerHTML = '<div class="card" style="text-align:center; color:var(--text-muted);">سجل القرارات نظيف. لم يتم تسجيل أي إجراء بعد.</div>';
+        return;
+      }
+
+      c.innerHTML = logs.map(l => `
+        <div class="item-row" style="border-right:3px solid var(--admin-red);">
+          <div>
+            <div style="font-weight:bold; font-size:13px; color:var(--gold);">${l.action}</div>
+            <div style="font-size:12px; color:var(--text-main); margin-top:2px;">الهدف: ${l.target}</div>
+            <div style="font-size:11px; color:var(--text-muted);">المسؤول: ${l.admin} | ملاحظات: ${l.notes}</div>
+          </div>
+          <div style="font-size:11px; color:var(--text-muted);">${l.time}</div>
+        </div>
+      `).join('');
+    }
+
+    checkAdminAuth();
+  </script>
+</body>
+</html>

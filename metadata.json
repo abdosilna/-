@@ -1,0 +1,6 @@
+{
+  "name": "تطبيق التواصل العربي",
+  "description": "منصة تواصل اجتماعي عربية متكاملة للمجتمعات والمنشورات والمحادثات والمتجر، ولوحة إدارة متقدمة بتصميم داكن فاخر ودعم RTL.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
