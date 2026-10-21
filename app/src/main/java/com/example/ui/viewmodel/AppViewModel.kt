@@ -51,8 +51,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
   val storeItems = repository.getStoreItems().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
   val userInventory = repository.getUserInventory().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
   val myReports = repository.getMyReports().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-  val projects = repository.getAllProjects().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-  val adminProjects = repository.getAllProjectsAdmin().stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
 
   // Admin streams
   val adminStats: StateFlow<AdminStats> = repository.getAdminStats().stateIn(
@@ -313,37 +312,4 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
   }
 
-  // --- Projects & Downloads ---
-
-  fun downloadProject(projectId: Long, onDownloadComplete: (ProjectEntity) -> Unit) {
-    viewModelScope.launch {
-      val res = repository.recordProjectDownload(projectId)
-      res.onSuccess { proj ->
-        notify("تم تجهيز وتحميل ملف المشروع بنجاح 📦")
-        onDownloadComplete(proj)
-      }.onFailure {
-        notify(it.message ?: "فشل التحميل")
-      }
-    }
-  }
-
-  fun createProject(title: String, desc: String, category: String, version: String, content: String, onDone: () -> Unit) {
-    viewModelScope.launch {
-      val res = repository.createProject(title, desc, category, version, content)
-      res.onSuccess {
-        notify("تم نشر المشروع بنجاح (+25 نقطة) 🚀")
-        onDone()
-      }.onFailure {
-        notify(it.message ?: "فشل نشر المشروع")
-      }
-    }
-  }
-
-  fun exportSystemBackup(onReady: (String) -> Unit) {
-    viewModelScope.launch {
-      val json = repository.exportProjectBackupJson()
-      notify("تم تجهيز حزمة المشروع والنسخة الاحتياطية بنجاح 💾")
-      onReady(json)
-    }
-  }
 }
